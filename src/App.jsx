@@ -4,7 +4,7 @@ import {
     Mail, Briefcase, Zap, Code, MapPin, Github, Linkedin, Download, 
     Loader2, Palette, ExternalLink, MessageSquare
 } from 'lucide-react';
-import AdminPanel from './Admin.jsx';
+import AdminPanel from './Admin';
 
 // --- 1. CORE UTILITIES, HOOKS & STYLES ---
 
