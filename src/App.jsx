@@ -4,7 +4,7 @@ import {
     Mail, Briefcase, Zap, Code, MapPin, Github, Linkedin, Download, 
     Loader2, Palette, ExternalLink, MessageSquare
 } from 'lucide-react';
-import AdminPanel from './Admin';
+import AdminPanel from './admin.jsx';
 
 // API Base URL - uses environment variable or defaults to localhost
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
