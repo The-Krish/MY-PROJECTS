@@ -3,6 +3,9 @@ import {
     PlusCircle, Trash2, Edit, Save, MessageSquare, Search, Settings, User
 } from 'lucide-react';
 
+// API Base URL - uses environment variable or defaults to localhost
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 // Custom hook for theme classes (light mode only)
 const useThemeClasses = () => {
     return useMemo(() => {
@@ -64,7 +67,7 @@ function ExperienceForm({ initialData, onSaveSuccess, onCancel, setCollection })
         const dataToSave = { ...formData };
         try {
             if (initialData.id) {
-                const res = await fetch(`http://localhost:8000/experience/${initialData.id}`, {
+                const res = await fetch(`${API_URL}/experience/${initialData.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSave),
@@ -76,7 +79,7 @@ function ExperienceForm({ initialData, onSaveSuccess, onCancel, setCollection })
                     setCollection(oldItems => oldItems.map(item => item.id === initialData.id ? ({ id: saved._id || saved.id || initialData.id, ...saved }) : item));
                 }
             } else {
-                const res = await fetch('http://localhost:8000/experience', {
+                const res = await fetch(`${API_URL}/experience`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSave),
@@ -152,7 +155,7 @@ function SkillForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
         const dataToSave = { ...formData };
         try {
             if (initialData.id) {
-                const res = await fetch(`http://localhost:8000/skill/${initialData.id}`, {
+                const res = await fetch(`${API_URL}/skill/${initialData.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSave),
@@ -164,7 +167,7 @@ function SkillForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
                     setCollection(oldItems => oldItems.map(item => item.id === initialData.id ? ({ id: saved._id || saved.id || initialData.id, ...saved }) : item));
                 }
             } else {
-                const res = await fetch('http://localhost:8000/skill', {
+                const res = await fetch(`${API_URL}/skill`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSave),
@@ -244,7 +247,7 @@ function ProjectForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
         const dataToSave = { ...formData };
         try {
             if (initialData.id) {
-                const res = await fetch(`http://localhost:8000/project/${initialData.id}`, {
+                const res = await fetch(`${API_URL}/project/${initialData.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSave),
@@ -256,7 +259,7 @@ function ProjectForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
                     setCollection(oldItems => oldItems.map(item => item.id === initialData.id ? ({ id: saved._id || saved.id || initialData.id, ...saved }) : item));
                 }
             } else {
-                const res = await fetch('http://localhost:8000/project', {
+                const res = await fetch(`${API_URL}/project`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToSave),
@@ -331,7 +334,7 @@ function ArtForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
         setStatusMessage('Saving...');
         const dataToSave = { ...formData };
         if (initialData.id) {
-            const res = await fetch(`http://localhost:8000/art/${initialData.id}`, {
+            const res = await fetch(`${API_URL}/art/${initialData.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSave),
@@ -344,7 +347,7 @@ function ArtForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
                 setCollection(oldItems => oldItems.map(item => item.id === initialData.id ? ({ ...item, ...dataToSave }) : item));
             }
         } else {
-            const res = await fetch('http://localhost:8000/art', {
+            const res = await fetch(`${API_URL}/art`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSave),
@@ -384,7 +387,7 @@ function ArtForm({ initialData, onSaveSuccess, onCancel, setCollection }) {
                             const uploadFile = async () => {
                                 const uploadFormData = new FormData();
                                 uploadFormData.append('artImage', file);
-                                const res = await fetch('http://localhost:8000/upload/art', {
+                                const res = await fetch(`${API_URL}/upload/art`, {
                                     method: 'POST',
                                     body: uploadFormData
                                 });
@@ -423,7 +426,7 @@ function CollectionManager({ title, collectionName, items, setCollection, initia
     useEffect(() => {
         if (collectionName !== 'experiences') return;
         const load = async () => {
-            const res = await fetch('http://localhost:8000/experience');
+            const res = await fetch(`${API_URL}/experience`);
             if (res.ok) {
                 const body = await res.json();
 
@@ -446,7 +449,7 @@ function CollectionManager({ title, collectionName, items, setCollection, initia
     useEffect(() => {
         if (collectionName !== 'skills') return;
         const load = async () => {
-            const res = await fetch('http://localhost:8000/skill');
+            const res = await fetch(`${API_URL}/skill`);
             if (res.ok) {
                 const body = await res.json();
 
@@ -469,7 +472,7 @@ function CollectionManager({ title, collectionName, items, setCollection, initia
     useEffect(() => {
         if (collectionName !== 'projects') return;
         const load = async () => {
-            const res = await fetch('http://localhost:8000/project');
+            const res = await fetch(`${API_URL}/project`);
             if (res.ok) {
                 const body = await res.json();
 
@@ -492,7 +495,7 @@ function CollectionManager({ title, collectionName, items, setCollection, initia
     useEffect(() => {
         if (collectionName !== 'art_projects') return;
         const load = async () => {
-            const res = await fetch('http://localhost:8000/art');
+            const res = await fetch(`${API_URL}/art`);
             if (res.ok) {
                 const body = await res.json();
 
@@ -524,7 +527,7 @@ function CollectionManager({ title, collectionName, items, setCollection, initia
                 if ((collectionName === 'experiences' || collectionName === 'skills' || collectionName === 'projects' || collectionName === 'art_projects') && itemToDelete.id) {
                     const endpoint = collectionName === 'experiences' ? 'experience' : (collectionName === 'skills' ? 'skill' : (collectionName === 'projects' ? 'project' : 'art'));
                     try {
-                        const res = await fetch(`http://localhost:8000/${endpoint}/${itemToDelete.id}`, { method: 'DELETE' });
+                        const res = await fetch(`${API_URL}/${endpoint}/${itemToDelete.id}`, { method: 'DELETE' });
                         if (!res.ok) throw new Error(`Server responded ${res.status}`);
                         const body = await res.json().catch(() => null);
                         if (body && body.statuscode === 1) {
@@ -694,7 +697,7 @@ function ProfileManager({ data, setPortfolioData }) {
 
         try {
             // POST to server endpoint - change path if your server exposes a different route
-            const res = await fetch('http://localhost:8000/intro', {
+            const res = await fetch(`${API_URL}/intro`, {
                 method: 'POST',
                 headers: { 'Content-Type':'application/json; charset=UTF-8' },
                 body: JSON.stringify(bioData),
@@ -777,7 +780,7 @@ function ProfileManager({ data, setPortfolioData }) {
                         const uploadFile = async () => {
                             const formData = new FormData();
                             formData.append('profileImage', file);
-                            const res = await fetch('http://localhost:8000/upload/profile', {
+                            const res = await fetch(`${API_URL}/upload/profile`, {
                                 method: 'POST',
                                 body: formData
                             });
@@ -838,7 +841,7 @@ function QueriesManager({ queries, setQueries }) {
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this query? This cannot be undone.")) {
             const deleteQuery = async () => {
-                const res = await fetch(`http://localhost:8000/query/${id}`, {
+                const res = await fetch(`${API_URL}/query/${id}`, {
                     method: 'DELETE'
                 });
                 if (res.ok) {
@@ -918,76 +921,16 @@ function QueriesManager({ queries, setQueries }) {
 function AdminPanel({ data, setPortfolioData, setSkills, setProjects, setArtProjects, setExperiences, setQueries }) {
     const { mainText } = useThemeClasses();
 
-    // Fetch experiences from backend on mount and populate local state
-    useEffect(() => {
-        const loadExperiences = async () => {
-            const res = await fetch('http://localhost:8000/experience');
-            if (res.ok) {
-                const body = await res.json();
 
-                let items = body.d;
-                if (!items) {
-                    items = body;
-                }
 
-                const mapped = items.map(it => ({ id: it._id || it.id || generateId(), ...it }));
-                setExperiences(mapped);
-            } else {
-                console.error('Failed to load experiences from backend');
-            }
-        };
 
-        loadExperiences();
-    }, [setExperiences]);
 
-    // Fetch skills from backend on mount and populate local state
-    useEffect(() => {
-        const loadSkills = async () => {
-            const res = await fetch('http://localhost:8000/skill');
-            if (res.ok) {
-                const body = await res.json();
 
-                let items = body.d;
-                if (!items) {
-                    items = body;
-                }
-
-                const mapped = items.map(it => ({ id: it._id || it.id || generateId(), ...it }));
-                setSkills(mapped);
-            } else {
-                console.error('Failed to load skills from backend');
-            }
-        };
-
-        loadSkills();
-    }, [setSkills]);
-
-    // Fetch projects from backend on mount and populate local state
-    useEffect(() => {
-        const loadProjects = async () => {
-            const res = await fetch('http://localhost:8000/project');
-            if (res.ok) {
-                const body = await res.json();
-
-                let items = body.d;
-                if (!items) {
-                    items = body;
-                }
-
-                const mapped = items.map(it => ({ id: it._id || it.id || generateId(), ...it }));
-                setProjects(mapped);
-            } else {
-                console.error('Failed to load projects from backend');
-            }
-        };
-
-        loadProjects();
-    }, [setProjects]);
 
     // Fetch queries from backend on mount and populate local state
     useEffect(() => {
         const loadQueries = async () => {
-            const res = await fetch('http://localhost:8000/query');
+            const res = await fetch(`${API_URL}/query`);
             if (res.ok) {
                 const body = await res.json();
 
@@ -1006,27 +949,6 @@ function AdminPanel({ data, setPortfolioData, setSkills, setProjects, setArtProj
         loadQueries();
     }, [setQueries]);
 
-    // Fetch art from backend on mount and populate local state
-    useEffect(() => {
-        const loadArt = async () => {
-            const res = await fetch('http://localhost:8000/art');
-            if (res.ok) {
-                const body = await res.json();
-
-                let items = body.d;
-                if (!items) {
-                    items = body;
-                }
-
-                const mapped = items.map(it => ({ id: it._id || it.id || generateId(), ...it }));
-                setArtProjects(mapped);
-            } else {
-                console.error('Failed to load art from backend');
-            }
-        };
-
-        loadArt();
-    }, [setArtProjects]);
 
     return (
         <main className="max-w-7xl mx-auto py-6">
@@ -1035,10 +957,7 @@ function AdminPanel({ data, setPortfolioData, setSkills, setProjects, setArtProj
                     <Settings className={`w-8 h-8 ${mainText} animate-spin-slow`}/> ADMIN INVENTORY PANEL
                 </h1>
             </div>
-            
-            <p className="text-sm mb-6 border-4 p-3 shadow-[6px_6px_0px_#000000] text-red-600 border-black bg-yellow-200">
-                ⚠ *WORLD CONFIGURATION ALERT:* Inventory changes are not persistent (Local State). Refreshing the browser *will reset the world*.
-            </p>
+        
             
             <div className="grid grid-cols-1 gap-8 md:grid-cols-4 auto-rows-min">
                 

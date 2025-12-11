@@ -6,11 +6,15 @@ import {
 } from 'lucide-react';
 import AdminPanel from './Admin';
 
+// API Base URL - uses environment variable or defaults to localhost
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 // --- 1. CORE UTILITIES, HOOKS & STYLES ---
 
 // Custom hook for theme classes
 const useThemeClasses = () => {
     return useMemo(() => {
+        // Light mode only - dark mode removed
         const mainText = 'text-black';
         const mainBg = 'bg-gray-100'; 
         const tileBg = 'bg-white';
@@ -18,13 +22,24 @@ const useThemeClasses = () => {
         const tileShadow = 'shadow-[8px_8px_0px_#000000]';
         const tileAccent = 'bg-gray-100';
         const tileAccentBorder = 'border-black';
+        
+        // Define button styles
         const activeClass = 'active:shadow-none active:translate-y-0.5 transition-all duration-75';
-        const buttonPrimary = 'bg-cyan-300 hover:bg-cyan-400 text-black shadow-[4px_4px_0px_#000000]';
+        const buttonBase = 'border-2 font-semibold ' + activeClass;
+        
+        // Input classes
         const inputClass = "bg-white border-2 border-black p-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 text-black";
 
         return {
             mainText, mainBg, tileBg, tileBorder, tileShadow, tileAccent, tileAccentBorder,
-            activeClass, buttonPrimary, inputClass,
+            activeClass, buttonBase, inputClass,
+            
+            // Specific button color configurations
+            buttonPrimary: 'bg-cyan-300 hover:bg-cyan-400 text-black shadow-[4px_4px_0px_#000000]',
+            buttonSecondary: 'bg-gray-300 hover:bg-gray-400 text-black shadow-[4px_4px_0px_#000000]',
+            buttonSuccess: 'bg-lime-300 hover:bg-lime-400 text-black shadow-[4px_4px_0px_#000000]',
+            buttonWarning: 'bg-yellow-300 hover:bg-yellow-400 text-black shadow-[4px_4px_0px_#000000]',
+            buttonDanger: 'bg-red-400 hover:bg-red-500 text-black shadow-[4px_4px_0px_#000000]',
         };
     }, []);
 };
@@ -81,6 +96,44 @@ const CustomStyles = () => {
     `;
 };
 
+// Decoding Text Effect
+function DecodingText({ text, speed = 80 }) {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#@%!^&*()-+={[}]|\\:;\"'<,>.?/~`";
+    const [displayedText, setDisplayedText] = useState(
+        text.split('').map(() => alphabet[Math.floor(Math.random() * alphabet.length)]).join('')
+    );
+    const [index, setIndex] = useState(0);
+
+    const decodingColor = 'text-red-600';
+
+    useEffect(() => {
+        if (index >= text.length) return;
+
+        const timeout = setTimeout(() => {
+            setDisplayedText(prev => {
+                let newText = prev.split('');
+                newText[index] = text[index];
+                for (let i = index + 1; i < text.length; i++) {
+                    newText[i] = alphabet[Math.floor(Math.random() * alphabet.length)];
+                }
+                return newText.join('');
+            });
+            setIndex(prev => prev + 1);
+        }, speed);
+
+        return () => clearTimeout(timeout);
+    }, [text, index, speed]);
+
+    useEffect(() => {
+        setDisplayedText(
+            text.split('').map(() => alphabet[Math.floor(Math.random() * alphabet.length)]).join('')
+        );
+        setIndex(0);
+    }, [text]);
+
+    return <span className={decodingColor}>{displayedText}</span>; 
+}
+
 // Unique ID generator
 const generateId = () => crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9) + Date.now();
 
@@ -93,10 +146,18 @@ const generateId = () => crypto.randomUUID ? crypto.randomUUID() : Math.random()
 // =================================================================
 
 function Header() { 
-    return null;
-}
+    const { tileAccentBorder } = useThemeClasses();
 
-// Removed: Header component no longer needed
+    return (
+        <header className={`flex flex-col md:flex-row justify-between items-start md:items-center py-6 border-b-4 ${tileAccentBorder} mb-6`}>
+            {/* --- Header Start --- */}
+            <h1 className={`text-3xl items-center justify-center  font-extrabold  mb-4 md:mb-0`}>
+                MY-WORLD
+            </h1>
+            {/* --- Header End --- */}
+        </header>
+    );
+}
 
 function Hero({ profile }) {
     const { mainText, tileAccentBorder, activeClass, buttonBase } = useThemeClasses();
@@ -120,7 +181,7 @@ function Hero({ profile }) {
                     onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/150x150/000000/FFFFFF?text=FAIL"; }}
                 />
                 <h2 className={`text-xl font-bold mt-4 ${mainText}`}>
-                    <span>{profile.name}</span>
+                    <DecodingText text={profile.name} speed={100} />
                 </h2>
                 <p className={`text-sm text-gray-700 italic text-center`}>{profile.title}</p>
                 
@@ -347,7 +408,7 @@ function WorkQueryBlock({ setQueries }) {
         setStatusMessage('Sending chunk request...');
 
         const sendQuery = async () => {
-            const res = await fetch('http://localhost:8000/query', {
+            const res = await fetch(`${API_URL}/query`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -482,15 +543,10 @@ function Footer({ email }) {
 
 
 function PortfolioView({ data, setQueries }) {
-    const { mainText } = useThemeClasses();
-    
     return (
         <div className="max-w-7xl mx-auto py-6">
-            <div className="flex justify-center items-center mb-6 border-b-4 border-black pb-4">
-                <h1 className={`text-4xl font-extrabold ${mainText}`}>
-                    PORTFOLIO
-                </h1>
-            </div>
+            {/* --- PortfolioView Start --- */}
+            <Header profile={data.portfolioData} />
             
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-min">
                 <Hero profile={data.portfolioData} />
@@ -598,7 +654,7 @@ export default function App() {
         let mounted = true;
         const loadProfile = async () => {
             try {
-                const res = await fetch('http://localhost:8000/intro');
+                const res = await fetch(`${API_URL}/intro`);
                 if (!res.ok) return; // keep local defaults if server not ready
                 const serverData = await res.json();
 
@@ -630,7 +686,7 @@ export default function App() {
     // Fetch experiences from backend on mount and populate experiences state
     useEffect(() => {
         const loadExperiences = async () => {
-            const res = await fetch('http://localhost:8000/experience');
+            const res = await fetch(`${API_URL}/experience`);
             if (res.ok) {
                 const body = await res.json();
                 
@@ -662,7 +718,7 @@ export default function App() {
     // Fetch skills from backend on mount and populate skills state
     useEffect(() => {
         const loadSkills = async () => {
-            const res = await fetch('http://localhost:8000/skill');
+            const res = await fetch(`${API_URL}/skill`);
             if (res.ok) {
                 const body = await res.json();
                 
@@ -692,7 +748,7 @@ export default function App() {
     // Fetch projects from backend on mount and populate projects state
     useEffect(() => {
         const loadProjects = async () => {
-            const res = await fetch('http://localhost:8000/project');
+            const res = await fetch(`${API_URL}/project`);
             if (res.ok) {
                 const body = await res.json();
                 
@@ -724,7 +780,7 @@ export default function App() {
     // Fetch queries from backend on mount and populate queries state
     useEffect(() => {
         const loadQueries = async () => {
-            const res = await fetch('http://localhost:8000/query');
+            const res = await fetch(`${API_URL}/query`);
             if (res.ok) {
                 const body = await res.json();
                 
@@ -754,7 +810,7 @@ export default function App() {
     // Fetch art from backend on mount and populate artProjects state
     useEffect(() => {
         const loadArt = async () => {
-            const res = await fetch('http://localhost:8000/art');
+            const res = await fetch(`${API_URL}/art`);
             if (res.ok) {
                 const body = await res.json();
                 

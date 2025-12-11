@@ -74,12 +74,12 @@ const uploadArt = multer({
     fileFilter: fileFilter
 });
 
-app.listen(8000, () => {
-  console.log(`Server is running `);
+app.listen(process.env.PORT || 8000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 8000}`);
 });
 
 // mongoose.connect("mongodb://localhost:27017/PortfolioDB")
-mongoose.connect("mongodb+srv://krishhgo23_db_user:OiU0WVrt8B1BQkVB@cluster0.vtetwto.mongodb.net/portoDB")
+mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://krishhgo23_db_user:OiU0WVrt8B1BQkVB@cluster0.vtetwto.mongodb.net/portoDB")
     .then(() => {
         console.log("Connected to MongoDB");
     })
@@ -433,7 +433,8 @@ app.post('/upload/profile', uploadProfile.single('profileImage'), (req, res) => 
     if (!req.file) {
         return res.status(400).json({ statuscode: 0, error: 'No file uploaded' });
     }
-    const fileUrl = `http://localhost:8000/uploads/profile/${req.file.filename}`;
+    const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 8000}`;
+    const fileUrl = `${baseUrl}/uploads/profile/${req.file.filename}`;
     res.json({ statuscode: 1, d: { url: fileUrl, filename: req.file.filename } });
 });
 
@@ -442,7 +443,8 @@ app.post('/upload/art', uploadArt.single('artImage'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ statuscode: 0, error: 'No file uploaded' });
     }
-    const fileUrl = `http://localhost:8000/uploads/art/${req.file.filename}`;
+    const baseUrl = process.env.API_BASE_URL || `http://localhost:${process.env.PORT || 8000}`;
+    const fileUrl = `${baseUrl}/uploads/art/${req.file.filename}`;
     res.json({ statuscode: 1, d: { url: fileUrl, filename: req.file.filename } });
 });
 

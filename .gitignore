@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment
+.env
+.env.local
+
+# Uploads (ephemeral on production)
+/uploads/
+portof/
+
+# OS
+Thumbs.db
