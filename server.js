@@ -81,7 +81,7 @@ app.listen(process.env.PORT || 8000, () => {
 });
 
 // mongoose.connect("mongodb://localhost:27017/PortfolioDB")
-mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://krishhgo23_db_user:OiU0WVrt8B1BQkVB@cluster0.vtetwto.mongodb.net/portoDB")
+mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://krishhgo23_db_user:OiU0WVrt8B1BQkVB@cluster0.vtetwto.mongodb.net/portfolio?retryWrites=true&w=majority")
     .then(() => {
         console.log("Connected to MongoDB");
     })
